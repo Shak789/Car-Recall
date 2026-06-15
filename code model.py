@@ -83,7 +83,7 @@ complaint_data_combined.drop_duplicates(subset = ["ODINO"])
 
 complain_data_combined_scoring = complaint_data_combined
 
-raw_data = complaint_data_combined[(complaint_data_combined["YEAR"] >= 2010) & (complaint_data_combined["YEAR"] <= 2020)]
+raw_data = complaint_data_combined[(complaint_data_combined["YEAR"] >= 2022) & (complaint_data_combined["YEAR"] <= 2026)]
 
 raw_data.to_csv("complaints_raw.csv")
 
@@ -103,6 +103,7 @@ complaint_data_combined['within_12_months'] = (
     (complaint_data_combined['LDATE'] - complaint_data_combined['RELEASE_DATE']).dt.days.between(0, 365)
 )
 
+complaint_data_combined['vehicle_age_at_complaint'] = complaint_data_combined['LDATE'].dt.year - complaint_data_combined['YEAR']
 
 
 def days_to_peak(date_series):
@@ -417,6 +418,7 @@ complaint_data_combined = complaint_data_combined.groupby(["MAKE", "MODEL", "YEA
     last_complaint_date = ("FAILDATE", "max"),
     complaints_first_12m = ('within_12_months', 'sum'),
     median_mileage = ("MILES", "median"),
+    median_age = ("vehicle_age_at_complaint", "median"),
     component = ("COMPDESC", lambda x: list(x.dropna())),
     days_to_peak=("LDATE", days_to_peak),
     description = ("CDESCR", lambda x: " ".join(x.dropna()))).reset_index()
@@ -639,10 +641,7 @@ print(complaint_recall.groupby('Recall')['under_investigation'].mean())
 
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
-
-
 from sklearn.preprocessing import StandardScaler
-
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from xgboost import XGBClassifier
@@ -655,7 +654,7 @@ features = [
     'keybert_safety_score',
     "median_mileage",
     "complaints_first_12m",
-    "tow_ratio"
+    "median_age"
 ]
 
 
@@ -1059,6 +1058,40 @@ summary = result.groupby('prob_band').agg(
     recall_rate=('Recall','mean')
 ).round(3)
 print(summary)
+
+from sklearn.calibration import calibration_curve
+from sklearn.calibration import CalibratedClassifierCV
+
+calibrated_lr = CalibratedClassifierCV(lr, method='sigmoid', cv=5)
+calibrated_lr.fit(X_train_scaled, y_train)
+prob_calibrated = calibrated_lr.predict_proba(X_test_scaled)[:, 1]
+
+fraction_of_positives, mean_predicted = calibration_curve(y_final, prob_recall, n_bins=10)
+
+plt.plot(mean_predicted, fraction_of_positives, 's-', label='Calibrated LR')
+plt.plot([0, 1], [0, 1], '--', label='Perfect calibration')
+plt.xlabel('Mean Predicted Probability')
+plt.ylabel('Fraction of Positives')
+plt.legend()
+plt.title('Reliability Diagram')
+plt.show()
+
+def risk_tier(prob):
+    if prob >= 0.85:
+        return 'High Risk'
+    elif prob >= 0.65:
+        return 'Elevated Risk'
+    elif prob >= 0.50:
+        return 'Moderate Risk'
+    else:
+        return 'Low Risk'
+
+result['risk_tier'] = result['Probability_Recall'].apply(risk_tier)
+
+# Show actual recall rate by tier
+print(result.groupby('risk_tier')['Recall'].mean())
+print(result.groupby('risk_tier')['Recall'].count())
+
 
 '''
 import re
