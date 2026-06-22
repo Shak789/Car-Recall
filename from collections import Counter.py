@@ -74,7 +74,7 @@ all_phrases = [
 
 # step 2: count most common
 phrase_counts = Counter(all_phrases)
-top_phrases = [phrase for phrase, count in phrase_counts.most_common(200)]
+top_phrases = [phrase for phrase, count in phrase_counts.most_common(100)]
 print(top_phrases)
 
 print(df["top_words"].iloc[0] )

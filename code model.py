@@ -523,7 +523,7 @@ df = complain_data_combined_scoring['COMPDESC'].value_counts()
 df.to_csv("test.csv")
 '''
 
-'''
+
 from keybert import KeyBERT
 import pandas as pd
 
@@ -544,8 +544,8 @@ def clean_text(text):
     text = re.sub(r'\s+', ' ', text).strip()
     return text
 
-complaint_data_combined_test = complaint_data_combined[(complaint_data_combined["YEAR"] >= 2020) & (complaint_data_combined["YEAR"] <= 2026)]
-recall_data_combined_test = recall_data_combined[(recall_data_combined["YEAR"] >= 2020) & (recall_data_combined["YEAR"] <= 2026)]
+complaint_data_combined_test = complaint_data_combined[(complaint_data_combined["YEAR"] >= 2025) & (complaint_data_combined["YEAR"] <= 2026)]
+recall_data_combined_test = recall_data_combined[(recall_data_combined["YEAR"] >= 2025) & (recall_data_combined["YEAR"] <= 2026)]
 recall_data_combined_test['Recall'] = 1
 
 
@@ -590,7 +590,7 @@ print("Done!")
 print(recall_df[['top_words']].head())
 
 recall_df.to_csv("words.csv")
-'''
+
 
 print("here")
 
