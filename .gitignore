@@ -3,3 +3,4 @@
 *.xlsx
 
 !result.csv
+!complaints_raw.csv
