@@ -404,8 +404,8 @@ with tab1:
         <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.06); margin: 14px 0 8px 0;">
         
         <!-- Footprint text at the bottom -->
-        <div style="color: #6b7280; font-size: 13px; opacity: 0.85; line-height: 1.3;">
-            Designed for prioritizing risk; effectiveness may vary across vehicle segments.
+        <div style="color: #6b7280; font-size: 13px; opacity: 0.95; line-height: 1.3;">
+            Designed to prioritize risk; effectiveness may vary across vehicle segments. Dashboard only includes vehicles with 10+ complaints to prevent low sample sizes.
         </div>
 
                 
