@@ -863,6 +863,7 @@ with tab5:
             <div class="insight-text">
                 The model struggles with predicting risk scores for near-luxury, luxury, or truck models which barely meet complaint volume thresholds and whose owners often bypass NHTSA reporting. 
                 American and European Luxury owners (e.g. Mercedes-Benz, BMW, Audi, Cadillac, Lincoln) often visit dealers before filing formal complaints, while truck owners may route issues through maintenance channels. This suppresses complaint volume.
+            </div>
             <div class="insight-label">ACTION</div>
             <div class="insight-action">
                 Dealer service visit volumes and warranty claim rates should supplement NHTSA complaint data for luxury segments. Commercial maintenance records should be monitored for trucks. NHTSA data alone will not surface risks in either group.
