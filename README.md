@@ -62,7 +62,7 @@ The distribution of scores leads to 3 distinct tiers for evaluating recalls:
 
 ## SHAP Analysis
 
-![Formula](https://raw.githubusercontent.com/shak789/Car-Recall/master/SHAP.png)
+![Formula](https://raw.githubusercontent.com/shak789/Car-Recall/master/shap_xgb_dot.png)
 
 The SHAP analysis shows the feature impact is balanced. Normalizing complaint levels was a reasonable choice since complaint volume dominated in previous iterations. The SHAP values also demonstrates that low mileage failures are more concerning than high mileage ones. 
 
