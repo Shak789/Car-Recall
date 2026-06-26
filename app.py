@@ -668,12 +668,19 @@ with tab3:
 
     count = len(display_df)
 
-    st.metric(label="🚨 High-Risk Vehicles Without Recalls Identified", value=count)
+    st.metric(label="⚠️ High-Risk Vehicles Without Recalls Identified", value=count)
 
     st.markdown(
         f"<div style='color: #8b8fa8; font-size: 14px;'>"
         f"The following vehicles have a score above 70 but no active NHTSA recalls. High scores can indicate a pattern of problematic complaints and strong potential for recall.\
             Manufacturers should prioritize these vehicles as investigation candidates. Even if NHTSA does not issue a recall, the high risk scores show that the vehicles have many problematic complaints that can affect consumer trust and sales."
+        f"</div>",
+        unsafe_allow_html=True
+    )
+
+    st.markdown(
+        f"<div style='color: #FF0000; font-size: 14px; margin-top: 15px;'>"
+        f"🚨 Alert: During the development of this dashboard in June 2026, the 2022 Chrysler Pacifica Hybrid (Risk Score: 84) received an NHTSA recall document due to failing battery packs. The vehicle has not yet appeared in the NHTSA database, demonstrating the model's early warning capability in real time."
         f"</div>",
         unsafe_allow_html=True
     )
@@ -831,7 +838,7 @@ with tab5:
         </style>
 
         <div class="insight-section">
-            <div class="insight-title">🚨 Early Warning System</div>
+            <div class="insight-title">⚠️ Early Warning System</div>
             <div class="insight-label">INSIGHT</div>
             <div class="insight-text">
                 Vehicles with risk scores above 70 have not been recalled by NHTSA, 
@@ -858,7 +865,7 @@ with tab5:
         </div>
 
         <div class="insight-section">
-            <div class="insight-title">⚠️ Difficult to Detect Risk Profiles</div>
+            <div class="insight-title">🔍 Difficult to Detect Risk Profiles</div>
             <div class="insight-label">INSIGHT</div>
             <div class="insight-text">
                 The model struggles with predicting risk scores for near-luxury, luxury, or truck models which barely meet complaint volume thresholds and whose owners often bypass NHTSA reporting. 
