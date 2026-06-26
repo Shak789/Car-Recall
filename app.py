@@ -693,27 +693,11 @@ with tab2:
         if col in existing_all_cols and col not in selected_visible_cols:
             selected_visible_cols.insert(0, col)
 
-    # 5. Filter your dataframe down to ONLY the selected columns
-    filtered_table_df = display_df[selected_visible_cols]
+    filtered_table_df = display_df[selected_visible_cols]    
 
-    # 6. Apply row styling (make sure to update the style function to handle missing columns safely)
-    def style_risk_rows_safe(row):
-        # Check if Risk Category column is currently visible before styling
-        if "Risk Category" in row.index:
-            if row["Risk Category"] == "High: Investigate Immediately":
-                return ["background-color: #4a1515"] * len(row)
-            elif row["Risk Category"] == "Medium: Monitor Vehicle Closely":
-                return ["background-color: #3b2d11"] * len(row)
-            elif row["Risk Category"] == "Low: Continue Routine Monitoring":
-                return ["background-color: #11331c"] * len(row)
-        return [""] * len(row)
-
-    styled_df = filtered_table_df.style.apply(style_risk_rows_safe, axis=1)
-
-    # 7. Render the customized table
     st.dataframe(
-        styled_df, 
-        column_config=col_config_dict,  # Uses your existing config dictionary safely
+        filtered_table_df, 
+        column_config=col_config_dict,  
         use_container_width=True, 
         hide_index=True
     )
