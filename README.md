@@ -13,10 +13,10 @@ The score achieved a clear boundary between recalled and non-recalled vehicles. 
 
 The model was first trained and tested on 2010-2020 data.
 
-**Pivoting from Classification to Probabilistic Outputs**
+## Pivoting from Classification to Probabilistic Outputs
 The project focuses on probabilistic outputs to predict recalls rather than binary classification. Classification uses an arbitrary threshold to separate between recalled and non-recalled vehicles, but it does not illustrate the differences between the likelihood of vehicles being recalled. For example, a vehicle with a 55% probability of recall should not be viewed the same as a vehicle which has a 95% probability of recall. Using probabilities allows regulators and manufacturers to distinguish between ambiguous defect signals and high-confidence safety anomalies. 
 
-**Comparing Models**
+## Comparing Models
 Three models (logistic regression, random forest, XGBoost) were trained and tested on data from 2010 to 2020. Since a probabilistic approach is prioritized, it is important to verify if the models are calibrated.
 
 ![Formula](https://raw.githubusercontent.com/shak789/Car-Recall/master/Calibration.png)
@@ -42,7 +42,7 @@ Given the intervals are very small, all models were evaluated on whether they co
 
 This chart shows that the risk score for logistic regression is monotonically increasing for every bracket, compared to random forest which has inconsistent changes in recall rate across the tiers. Therefore, logistic regression was chosen as the final model since it can provide meaningful rankings for risk scores and manufacturers and regulators can find value in the model’s outputs. 
 
-**Testing on Unseen Data**
+## Testing on Unseen Data
 The logistic regression model was tested on data from 2022 to 2026. The AUC score decreased to 0.61. 
 
 ![Formula](https://raw.githubusercontent.com/shak789/Car-Recall/master/Segment2.png)
@@ -60,14 +60,13 @@ The distribution of scores leads to 3 distinct tiers for evaluating recalls:
 2.	Medium Risk (50 - 69): Monitor Vehicle Closely
 3.	High Risk (70 - 100): Investigate Immediately
 
-**SHAP Analysis**
+## SHAP Analysis
 
 ![Formula](https://raw.githubusercontent.com/shak789/Car-Recall/master/SHAP.png)
 
 The SHAP analysis shows the feature impact is balanced. Normalizing complaint levels was a reasonable choice since complaint volume dominated in previous iterations. The SHAP values also demonstrates that low mileage failures are more concerning than high mileage ones. 
 
-**Conclusion**
-
+## Conclusion
 This project provides manufacturers and regulators with an interpretable model for predicting vehicle recall risk. Logistic regression was selected as the final model through a structured process. After applying class weighting and hyperparameter tuning to all model, bootstrap confidence intervals demonstrated that logistic regression had a statistically significant AUC advantage over XGBoost, and the risk-tier analysis showed more consistent, monotonic recall rates than random forest. Combined with the SHAP analysis, manufacturers and regulators can use a meaningful and explainable model, rather than an arbitrarily chosen algorithm.
 Beyond prediction, the model offers practical value. It can be used as an early warning system by flagging vehicles before official NHTSA action, and it distinguishes between "sudden" and "slow burn" recall patterns, which require different monitoring strategies.
 
