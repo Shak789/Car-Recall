@@ -840,7 +840,7 @@ with tab5:
             <div class="insight-label">ACTION</div>
             <div class="insight-action">
                 Manufacturers and Regulators should prioritize investigation of flagged vehicles to reduce liability. Even if recalls are not issued, 
-                manufcaturers should monitor patterns of safety complaints to protect brand trust and consumer retention.
+                manufacturers should monitor patterns of safety complaints to protect brand trust and consumer retention.
             </div>
         </div>
 
@@ -862,12 +862,10 @@ with tab5:
             <div class="insight-label">INSIGHT</div>
             <div class="insight-text">
                 The model struggles with predicting risk scores for near-luxury, luxury, or truck models which barely meet complaint volume thresholds and whose owners often bypass NHTSA reporting. 
-                American and European Luxury owners (e.g. Mercedes-Benz, BMW, Audi, Cadillac, Lincoln) often visit dealers before filing formal complaints, while truck owners may route issues through maintenance channels. This suppresses complaint volume, causing to the model to have less data regardless of actual defect prevalence. 
-            </div>
+                American and European Luxury owners (e.g. Mercedes-Benz, BMW, Audi, Cadillac, Lincoln) often visit dealers before filing formal complaints, while truck owners may route issues through maintenance channels. This suppresses complaint volume.
             <div class="insight-label">ACTION</div>
             <div class="insight-action">
-                Monitor warranty claims and dealer service visit volumes since
-                NHTSA data alone will not flag these risks.
+                Dealer service visit volumes and warranty claim rates should supplement NHTSA complaint data for luxury segments. Commercial maintenance records should be monitored for trucks. NHTSA data alone will not surface risks in either group.
             </div>
         </div>
     """, unsafe_allow_html=True)
