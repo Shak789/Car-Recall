@@ -207,7 +207,7 @@ with tab1:
     with col_info:
         with st.expander("ℹ️ About this Dashboard"):
             st.write("""
-            Every year, thousands of consumers file complaints with NHTSA about vehicle defects. This dashboard uses those complaints to predict which vehicles (2022-2026 models) are most at risk of recall by providing a **risk score** on a scale from 0 to 100. These scores can be segmented into three specific tiers:
+            Every year, thousands of consumers file complaints with NHTSA about vehicle defects. This dashboard uses a machine learning model shows which vehicles (2022-2026 models) are most at risk of recall based on their complaint data. It provides a **risk score** on a scale from 0 to 100. These scores can be segmented into three specific tiers:
 
             - Low Risk (0 - 49): Continue Routine Monitoring
             - Medium Risk (50 - 69): Monitor Vehicle Closely
@@ -215,13 +215,15 @@ with tab1:
                      
             **Note:** To ensure statistical accuracy, only vehicles with **at least 10 complaints** are included in this dashboard.
                      
-            The risk score is calculated by evaluating specific data points extracted from each complaint:
+            A machine learning model (logistic regression) calculates the risk score by evaluating specific data points extracted from each complaint:
                      
             - Complaint Description: Identifies keywords within descriptions that strongly correlate with historical recalls.
             - First Year Complaint Proportion: Measures the vehicle's first-year complaints against the manufacturer’s total first-year complaints. This metric is normalized to isolate early defect patterns regardless of overall sales volume.
             - Median Mileage: Analyzes the median mileage of vehicles at the time of complaints to identify premature component defects.
                      
             Since complaints often accumulate before vehicles are officially recalled, the scoring metrics provide manufacturers and regulators with an early warning system. Select a vehicle to explore its risk score, what's driving it, and if it shows signs of a safety issue that haven't yet received official attention.
+
+            For details on the model, see the *Methodology* tab above
 
             """)
 
@@ -831,12 +833,12 @@ with tab5:
             <div class="insight-title">⚠️ Difficult to Detect Risk Profiles</div>
             <div class="insight-label">INSIGHT</div>
             <div class="insight-text">
-                Model struggles with predicting risk scores for near-luxury, luxury, 
-                or truck models which barely meet complaint volume tresholds and  whose owners often bypass NHTSA reporting.
+                The model struggles with predicting risk scores for near-luxury, luxury, or truck models which barely meet complaint volume thresholds and whose owners often bypass NHTSA reporting. 
+                Luxury owners often visit dealers before filing formal complaints, while truck owners may route issues through maintenance channels.
             </div>
             <div class="insight-label">ACTION</div>
             <div class="insight-action">
-                Monitor warranty claims and dealer service visit volums since
+                Monitor warranty claims and dealer service visit volumes since
                 NHTSA data alone will not flag these risks.
             </div>
         </div>
