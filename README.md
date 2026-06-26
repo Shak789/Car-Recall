@@ -43,14 +43,14 @@ Given the intervals are very small, all models were evaluated on whether they co
 This chart shows that the risk score for logistic regression is monotonically increasing for every bracket, compared to random forest which has inconsistent changes in recall rate across the tiers. Therefore, logistic regression was chosen as the final model since it can provide meaningful rankings for risk scores and manufacturers and regulators can find value in the model’s outputs. 
 
 ## Testing on Unseen Data
-The logistic regression model was tested on data from 2022 to 2026. The AUC score decreased to 0.61. 
+The logistic regression model was tested on data from 2022 to 2026. The AUC score decreased to 0.61 on 2022-2026 data. Sinec this is a ranking model used as an early warning system, the AUC remains sufficient because the model's value lies in prioritization and tier categorization rather than precision. A regulator or manufacturer does not need the model to be correct in absolute terms. Instead, they need the model to rank higher-risk vehicles above lower-risk ones, which is confirmed by the cumulative distribution and tier analysis. 
 
 ![Formula](https://raw.githubusercontent.com/shak789/Car-Recall/master/Segment2.png)
 
 The model’s diminishing performance may be explained by the following:
 1.	Early warning of vehicle recalls: The model is flagging some vehicles as high risk that may not yet have received official recall. There were 31 non-recalled vehicles (approximately 15% of non-recalled vehicles) with risk scores above 70, which explains the decrease in recall rate for vehicles with a risk score of 70-80 and 80-90. This is useful for manufacturers to proactively investigate vehicles rather than wait for NHTSA action. Even if the vehicles are not recalled by NHTSA, the high scores indicate the vehicles have problematic complaints that may reduce sales.
 2.	Complaint accumulation lag: KeyBERT complaint scores decrease for recent years as newer vehicles have not accumulated enough complaints yet, particularly 2025-2026.
-3.	The model struggles with predicting risk scores for near-luxury, luxury, or truck models which barely meet complaint volume thresholds and whose owners often bypass NHTSA reporting. Luxury owners often visit dealers before filing formal complaints, while truck owners may route issues through maintenance channels.  Future iterations of the model could monitor warranty claims and dealer service visit volumes since NHTSA data alone will not flag these risks.
+3.The model struggles with predicting risk scores for near-luxury, luxury, or truck models which barely meet complaint volume thresholds and whose owners often bypass NHTSA reporting. American and European Luxury owners (e.g. Mercedes-Benz, BMW, Audi, Cadillac, Lincoln) often visit dealers before filing formal complaints, while truck owners may route issues through maintenance channels. This suppresses complaint volume, causing to the model to have less signal regardless of actual defect prevalence. Future iterations of the model could monitor warranty claims and dealer service visit volumes since NHTSA data alone will not flag these risks.
 
 ![Formula](https://raw.githubusercontent.com/shak789/Car-Recall/master/Cumulative.png)
 

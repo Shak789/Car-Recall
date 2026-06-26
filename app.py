@@ -862,7 +862,7 @@ with tab5:
             <div class="insight-label">INSIGHT</div>
             <div class="insight-text">
                 The model struggles with predicting risk scores for near-luxury, luxury, or truck models which barely meet complaint volume thresholds and whose owners often bypass NHTSA reporting. 
-                Luxury owners often visit dealers before filing formal complaints, while truck owners may route issues through maintenance channels.
+                American and European Luxury owners (e.g. Mercedes-Benz, BMW, Audi, Cadillac, Lincoln) often visit dealers before filing formal complaints, while truck owners may route issues through maintenance channels. This suppresses complaint volume, causing to the model to have less data regardless of actual defect prevalence. 
             </div>
             <div class="insight-label">ACTION</div>
             <div class="insight-action">
