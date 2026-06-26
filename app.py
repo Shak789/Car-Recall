@@ -119,6 +119,34 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+st.markdown("""
+<style>
+@media only screen and (max-width: 768px) {
+    .mobile-notice {
+        display: block !important;
+    }
+}
+@media only screen and (min-width: 769px) {
+    .mobile-notice {
+        display: none !important;
+    }
+}
+</style>
+
+<div class="mobile-notice">
+    <p style="
+        background-color: var(--secondary-background-color);
+        color: var(--text-color);
+        padding: 10px;
+        border-radius: 5px;
+        text-align: center;
+    ">
+        📱 Rotate to landscape for best experience
+    </p>
+</div>
+""", unsafe_allow_html=True)
+
+
 
 
 import plotly.graph_objects as go
@@ -180,7 +208,7 @@ def render_risk_gauge(risk_score, title="Recall Risk Score"):
     </style>
     """, unsafe_allow_html=True)
 
-tab1, tab2, tab3, tab4, tab5 = st.tabs(["Vehicle Profile", "Full Rankings", "Non-Recalled High Risk Vehicles", "Manufacturer Data", "Insights"])
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["Vehicle Profile", "Full Rankings", "Non-Recalled High Risk Vehicles", "Manufacturer Data", "Insights", "Methodology"])
 
 with tab1:
 
@@ -211,7 +239,7 @@ with tab1:
 
             - Low Risk (0 - 49): Continue Routine Monitoring
             - Medium Risk (50 - 69): Monitor Vehicle Closely
-            - High Risk (70 - 100): Immediate Investigation
+            - High Risk (70 - 100): Investigate Immediately
                      
             **Note:** To ensure statistical accuracy, only vehicles with **at least 10 complaints** are included in this dashboard.
                      
@@ -843,5 +871,9 @@ with tab5:
             </div>
         </div>
     """, unsafe_allow_html=True)
+
+with tab6:
+    with open("README.md", "r", encoding="utf-8") as f:
+        st.markdown(f.read())
 
     
