@@ -1,3 +1,5 @@
 *.csv
 *.pkl
 *.xlsx
+
+!result.csv
