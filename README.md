@@ -67,6 +67,7 @@ The distribution of scores leads to 3 distinct tiers for evaluating recalls:
 The SHAP analysis shows the feature impact is balanced. Normalizing complaint levels was a reasonable choice since complaint volume dominated in previous iterations. The SHAP values also demonstrates that low mileage failures are more concerning than high mileage ones. 
 
 **Conclusion**
+
 This project provides manufacturers and regulators with an interpretable model for predicting vehicle recall risk. Logistic regression was selected as the final model through a structured process. After applying class weighting and hyperparameter tuning to all model, bootstrap confidence intervals demonstrated that logistic regression had a statistically significant AUC advantage over XGBoost, and the risk-tier analysis showed more consistent, monotonic recall rates than random forest. Combined with the SHAP analysis, manufacturers and regulators can use a meaningful and explainable model, rather than an arbitrarily chosen algorithm.
 Beyond prediction, the model offers practical value. It can be used as an early warning system by flagging vehicles before official NHTSA action, and it distinguishes between "sudden" and "slow burn" recall patterns, which require different monitoring strategies.
 
