@@ -235,7 +235,7 @@ with tab1:
     with col_info:
         with st.expander("ℹ️ About this Dashboard"):
             st.write("""
-            Every year, thousands of consumers file complaints with NHTSA about vehicle defects. This dashboard uses a machine learning model shows which vehicles (2022-2026 models) are most at risk of recall based on their complaint data. It provides a **risk score** on a scale from 0 to 100. These scores can be segmented into three specific tiers:
+            Every year, tens of thousands of consumers file complaints with NHTSA about vehicle defects. This dashboard shows which vehicles (2022-2026 models) have the highest recall risk based on their complaint data. It provides a **risk score** on a scale from 0 to 100. These scores can be segmented into three specific tiers:
 
             - Low Risk (0 - 49): Continue Routine Monitoring
             - Medium Risk (50 - 69): Monitor Vehicle Closely
