@@ -203,7 +203,7 @@ def render_risk_gauge(risk_score, title="Recall Risk Score"):
     st.markdown("""
     <style>
     div.st-key-gauge_container {
-        margin-top: -40px;
+        margin-top: -30px;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -231,7 +231,7 @@ with tab1:
 
     st.markdown("Predict a vehicle's recall risk based on National Highway Traffic Safety Administration (NHTSA) consumer complaint data.")
     
-    col_info, col_other = st.columns([2.5,1])  # Make col_info wider
+    col_info, metric = st.columns([1.5,1])  # Make col_info wider
     with col_info:
         with st.expander("ℹ️ About this Dashboard"):
             st.write("""
@@ -254,6 +254,9 @@ with tab1:
             For details on the model, see the *Methodology* tab above
 
             """)
+
+    
+
 
 
     col1, col2, col3 = st.columns(3)
@@ -357,7 +360,67 @@ with tab1:
             </div>
             """, unsafe_allow_html=True)
 
+    spacer_col, reliability_card_col = st.columns([1.5, 3.0])
+
+    # Leave spacer_col empty! This keeps the area under the gauge clear.
+
+        # 2. CREATE THE ROW AND SHIFT IT UPWARD WITH NEGATIVE MARGIN
+    spacer_col, reliability_card_col = st.columns([1.5, 3.0])
+
+    # Leave spacer_col empty to keep the space under the gauge clear
+
+    with reliability_card_col:
+        st.markdown("""
+        <div style="
+        margin-top: -160px; 
+        position: relative;  
+        z-index: 10;        
+        padding: 16px 20px;
+        border-radius: 8px;
+        background-color: #111827;
+        border: 1px solid rgba(255,255,255,0.08);
+        ">
+            <div style="font-size: 0.85rem; color: rgba(255,255,255,0.6); margin-bottom: 10px; font-weight: 500; letter-spacing: 0.05em;">
+                    MODEL RELIABILITY
+            </div>
+            <ul style="margin: 0; padding-left: 0px; color: white; font-size: 0.9rem; font-weight: 500; line-height: 1.5;">
+            <li style="margin-bottom: 8px; padding-left: 0px;">
+                <span style="margin-left: -1px; display: inline-block;">Recall rates consistently increase across risk tiers, showing the thresholds separate high-risk and low-risk vehicles.</span>
+            </li>
+            <li style="margin-bottom: 8px; padding-left: 0px;">
+                <span style="margin-left: -1px; display: inline-block;"><strong style="color: #FF4B4B;">~96%</strong> of highest-risk vehicles (score 90–100) were recalled. Elevated scores correspond to higher real-world recall rates.</span>
+            </li>
+            <li style="margin-bottom: 8px; padding-left: 0px;">
+                <span style="margin-left: -1px; display: inline-block;"><strong style="color: #1976D2;">10%</strong> of unrecalled vehicles score over 70, highlighting potential early-stage risks before official recalls. </span>
+            </li>
+            <li style="margin-bottom: 8px; padding-left: 0px;">
+                <span style="margin-left: -1px; display: inline-block;"><strong style="color: #00FF00;">70%</strong> of recalled vehicles are identified in medium or high-risk tiers. </span>
+            </li>
+                    
+
+
+        </ul>
+        <!-- Subtle Divider Line inside the card -->
+        <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.06); margin: 14px 0 8px 0;">
+        
+        <!-- Footprint text at the bottom -->
+        <div style="color: #6b7280; font-size: 13px; opacity: 0.85; line-height: 1.3;">
+            Designed for prioritizing risk; effectiveness may vary across vehicle segments.
+        </div>
+
+                
+                
+                
+                    
+
+
+        </div>
+        """, unsafe_allow_html=True)
+
+
     
+
+   
 
 
 
@@ -369,7 +432,7 @@ with tab1:
 
     with col_shap:
         st.markdown(
-            '<div class="section-header" style="margin-top: -100px;">What drives this prediction</div>', 
+            '<div class="section-header" style="margin-top: 0px;">What drives this prediction</div>', 
             unsafe_allow_html=True
         )
         shap_cols = [c for c in vehicle.columns if c.startswith('shap_')]
@@ -404,7 +467,7 @@ with tab1:
             hovertemplate='<b>%{y}</b><br>Impact: %{x:.2f}%<extra></extra>'
         )
         fig_bar.update_layout(
-            height=350,
+            height=400,
             margin=dict(l=20, r=20, t=0, b=0),
             showlegend=False,
             xaxis_title="Relative Importance (%)",
@@ -419,7 +482,7 @@ with tab1:
         st.markdown("""
         <style>
         div.st-key-shap_chart {
-            margin-top: -40px;
+            margin-top: -10px;
         }
         </style>
         """, unsafe_allow_html=True)
@@ -427,7 +490,7 @@ with tab1:
     with col:
         # ── map ───────────────────────────────────────────────────────────
         st.markdown(
-            '<div class="section-header" style="margin-top: -100px;">Complaint Distribution by State</div>', 
+            '<div class="section-header" style="margin-top: 0px;">Complaint Distribution by State</div>', 
             unsafe_allow_html=True
         )
 
@@ -464,23 +527,20 @@ with tab1:
         st.markdown("""
         <style>
         div.st-key-map {
-            margin-top: -40px;
+            margin-top: -10px;
         }
         </style>
         """, unsafe_allow_html=True)
         
         
     # ── footer ────────────────────────────────────────────────────────
-    st.markdown("<div style='margin-top: -200px;'></div>", unsafe_allow_html=True)
-    st.divider()
-    st.markdown(
-        "<div style='color: #8b8fa8; font-size: 12px; text-align: center; margin-top: -15px;'>"
-        "Data from NHTSA complaints and recalls database."
-        "Risk scores are generated by a machine learning model that is trained on NHTSA complaint data and are intended for exploratory analysis only. "
-        "They should not be used as definitive safety assessments or substitutes for official NHTSA recall determinations."
-        "</div>",
-        unsafe_allow_html=True
-    )
+    st.markdown("""<div style="margin-top: -40px; text-align: center; width: 100%;">
+<hr style="border: none; border-top: 1px solid rgba(255,255,255,0.1); margin-bottom: 12px;">
+<div style="color: #8b8fa8; font-size: 12px; line-height: 1.4; padding: 0 10px;">
+Data from NHTSA complaints and recalls database. Risk scores are generated by a machine learning model that is trained on NHTSA complaint data and are intended for exploratory analysis only. They should not be used as definitive safety assessments or substitutes for official NHTSA recall determinations.
+</div>
+</div>""", unsafe_allow_html=True)
+
 
 with tab2:
 
