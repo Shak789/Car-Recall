@@ -723,11 +723,14 @@ with tab3:
     )
 
     st.markdown(
-        f"<div style='color: #FF0000; font-size: 14px; margin-top: 15px;'>"
-        f"🚨 Alert: During the development of this dashboard in June 2026, the 2022 Chrysler Pacifica Hybrid (Risk Score: 84) received an NHTSA recall document due to failing battery packs. The vehicle has not yet appeared in the NHTSA database, demonstrating the model's early warning capability in real time."
-        f"</div>",
-        unsafe_allow_html=True
-    )
+    f"<div style='color: #FF0000; font-size: 14px; margin-top: 15px;'>"
+    f"🚨 Alert: During the development of this dashboard in June 2026, the 2022 Chrysler Pacifica Hybrid (Risk Score: 84) received an "
+    f"<a href='https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V362-0804.pdf' style='color: #FF0000; text-decoration: underline;' target='_blank'>NHTSA recall document</a> "
+    f"due to failing battery packs. This vehicle received its first complaint over 4 years ago and has not yet appeared in the NHTSA database, demonstrating the model's early warning capability in real time."
+    f"</div>",
+    unsafe_allow_html=True
+)
+
 
     display_df["first_complaint_date"] = pd.to_datetime(display_df["first_complaint_date"], errors="coerce")
 
