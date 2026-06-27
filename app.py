@@ -382,20 +382,26 @@ with tab1:
         ">
             <div style="font-size: 0.85rem; color: rgba(255,255,255,0.6); margin-bottom: 10px; font-weight: 500; letter-spacing: 0.05em;">
                     MODEL RELIABILITY
-            </div>
-            <ul style="margin: 0; padding-left: 0px; color: white; font-size: 0.9rem; font-weight: 500; line-height: 1.5;">
-            <li style="margin-bottom: 8px; padding-left: 0px;">
-                <span style="margin-left: -1px; display: inline-block;">Recall rates consistently increase across risk tiers, showing the thresholds separate high-risk and low-risk vehicles.</span>
-            </li>
-            <li style="margin-bottom: 8px; padding-left: 0px;">
-                <span style="margin-left: -1px; display: inline-block;"><strong style="color: #FF4B4B;">~96%</strong> of highest-risk vehicles (score 90–100) were recalled. Elevated scores correspond to higher real-world recall rates.</span>
-            </li>
-            <li style="margin-bottom: 8px; padding-left: 0px;">
-                <span style="margin-left: -1px; display: inline-block;"><strong style="color: #1976D2;">10%</strong> of unrecalled vehicles score over 70, highlighting potential early-stage risks before official recalls. </span>
-            </li>
-            <li style="margin-bottom: 8px; padding-left: 0px;">
-                <span style="margin-left: -1px; display: inline-block;"><strong style="color: #00FF00;">70%</strong> of recalled vehicles are identified in medium or high-risk tiers. </span>
-            </li>
+           </div>
+            <ul style="margin: 0; padding-left: -2px; color: white; font-size: 0.9rem; font-weight: 500; line-height: 1.5;">
+                <!-- Item 1 -->
+                <li style="margin-bottom: 11px;">
+                    <span>Increasing recall rates across tiers validate the high and low-risk thresholds.</span>
+                </li>
+                <!-- Item 2 -->
+                <li style="margin-bottom: 11px; ::marker { color: #FF4B4B; }">
+                    <span><strong style="color: #FF4B4B;">~96%</strong> of highest-risk vehicles (score 90–100) were recalled.</span>
+                </li>
+                <!-- Item 3 -->
+                <li style="margin-bottom: 11px; ::marker { color: #1976D2; }">
+                    <span><strong style="color: #1976D2;">10%</strong> of unrecalled vehicles score over 70, highlighting potential early-stage risks.</span>
+                </li>
+                <!-- Item 4 -->
+                <li style="margin-bottom: 11px; ::marker { color: #00FF00; }">
+                    <span><strong style="color: #00FF00;">70%</strong> of recalled vehicles are identified in medium or high-risk tiers.</span>
+                </li>
+            </ul>
+
                     
 
 
