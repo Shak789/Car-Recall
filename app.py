@@ -354,7 +354,7 @@ with tab1:
             <div class="metric-card">
                 <div class="metric-label">NHTSA RECALL STATUS</div>
                 <div class="metric-value" style="color: {recall_color};">{recall_text}</div>
-                <div style="color: {recall_color}; font-size: 0.85rem; opacity: 0.85; margin-top: 4px;">
+                <div style="color: {recall_color}; font-size: 0.85rem; opacity: 0.85; margin-top: -0.7px;">
                     {recall_count_text}
                 </div>
             </div>
