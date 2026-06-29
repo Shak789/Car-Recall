@@ -64,7 +64,12 @@ The distribution of scores leads to 3 distinct tiers for evaluating recalls:
 
 ![Formula](https://raw.githubusercontent.com/shak789/Car-Recall/master/shap_xgb_dot.png)
 
-The SHAP analysis shows the feature impact is balanced. Normalizing complaint levels was a reasonable choice since complaint volume dominated in previous iterations. The SHAP values also demonstrates that low mileage failures are more concerning than high mileage ones. 
+The SHAP analysis shows three important insights:
+1. Normalizing the first-year complaint proportion by manufacturer volume was the right call. In earlier iterations complaint volume dominated the model and drowned out the other features. The balanced SHAP values confirm the normalization worked as intended.
+   
+2. The median mileage feature behaves as expected. Low mileage at time of complaint is more indicative of recall than high mileage. Failures at low mileage suggest early manufacturing defects, which are more likely to lead a recall, compared t0 high mileage failures that are more consistent with normal wear and tear.
+
+3. The KeyBERT score contributes meaningfully alongside the other features. The model is able to find patterns in complaint language that match serious safety defects.
 
 ## Conclusion
 This project provides manufacturers and regulators with an interpretable model for predicting vehicle recall risk. Logistic regression was selected as the final model through a structured process. After applying class weighting and hyperparameter tuning to all model, bootstrap confidence intervals demonstrated that logistic regression had a statistically significant AUC advantage over XGBoost, and the risk-tier analysis showed more consistent, monotonic recall rates than random forest. Combined with the SHAP analysis, manufacturers and regulators can use a meaningful and explainable model, rather than an arbitrarily chosen algorithm.
