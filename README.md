@@ -8,7 +8,7 @@ Since the complaint dataset was not merged with recalls by vehicle component, ov
 ## Features
 1.	**KeyBERT Safety Score**: KeyBERT was used to find keywords from vehicle complaints matched to recalls. Each vehicle make was then scored by the overlap of complaints in the description. TF-IDF was first used, but the keyword list provided was not relevant, since TF-IDF does not consider the semantic meaning of words. 
 The score achieved a clear boundary between recalled and non-recalled vehicles. Recalled vehicles produced a median score of 23, which was nearly three times higher than the median score of 9 in non-recalled vehicles.
-2.	**First Year Complaint Proportion:** Measures the vehicle's first-year complaints against the manufacturer’s total first-year complaints. This metric is normalized to isolate early defect patterns regardless of overall sales volume.
+2.	**First Year Complaint Proportion:** Measures a vehicle model's first-year complaints relative to the manufacturer’s total first-year complaints. The ratio uses stabilizing constants in the numerator and denominator to reduce noise from vehicles with low-volume complaints.
 3.	**Median mileage:** Median vehicle mileage at time of complaint.
 
 The model was first trained and tested on 2010-2020 data.
