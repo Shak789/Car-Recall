@@ -6,10 +6,10 @@ This project uses logistic regression to predict vehicle recall risk based on Na
 Since the complaint dataset was not merged with recalls by vehicle component, over 85% of complaint profiles are matched to recalls. While predicting recalls based on vehicle components would decrease the imbalance, it also significantly reduces the sample size per group since complaints span many components. This would reduce the signal from features needed to predict recall.
 
 ## Features
-1.	**KeyBERT Safety Score**: KeyBERT was used to find keywords from vehicle complaints matched to recalls. Each vehicle make was then scored by the overlap of complaints in the description. TF-IDF was first used, but the keyword list provided was not relevant, since TF-IDF does not consider the semantic meaning of words. 
+1.	**KeyBERT Safety Score**: KeyBERT was used to find keywords (on training data) from vehicle complaints matched to recalls. KeyBERT is only performed once and each vehicle is then scored by the overlap of complaints in the description. This eliminates the need to run KeyBERT on every incoming complaint during the full pipeline. TF-IDF was first used, but the keyword list provided was not relevant, since TF-IDF does not consider the semantic meaning of words.
 The score achieved a clear boundary between recalled and non-recalled vehicles. Recalled vehicles produced a median score of 23, which was nearly three times higher than the median score of 9 in non-recalled vehicles.
-2.	**First Year Complaint Proportion:** Measures a vehicle model's first-year complaints relative to the manufacturer’s total first-year complaints. The ratio uses stabilizing constants in the numerator and denominator to reduce noise from vehicles with low-volume complaints.
-3.	**Median mileage:** Median vehicle mileage at time of complaint.
+3.	**First Year Complaint Proportion:** Measures a vehicle model's first-year complaints relative to the manufacturer’s total first-year complaints. The ratio uses stabilizing constants in the numerator and denominator to reduce noise from vehicles with low-volume complaints.
+4.	**Median mileage:** Median vehicle mileage at time of complaint.
 
 The model was first trained and tested on 2010-2020 data.
 
