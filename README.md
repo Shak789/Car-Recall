@@ -19,42 +19,53 @@ The project focuses on probabilistic outputs to predict recalls rather than bina
 ## Comparing Models
 Three models (logistic regression, random forest, XGBoost) were trained and tested on data from 2010 to 2020. Since a probabilistic approach is prioritized, it is important to verify if the models are calibrated.
 
-![Formula](https://raw.githubusercontent.com/shak789/Car-Recall/master/Calibration.png)
+The diagrams show that each of the models are uncalibrated and underpredicting the probability of recall when class weighting is used. The Brier scores of approximately 0.2 indicate a root-mean-squared probability error of approximately 45% relative to the actual outcomes. However, if class weighting is removed, the model will collapse into predicting the majority class, which renders the probabilities meaningless.
 
-The diagrams show that each of the models are uncalibrated and underpredicting the probability of recall when class weighting is used. However, if class weighting is removed, the model will start only predicting the majority class, which renders the probabilities meaningless. 
+![Formula](https://raw.githubusercontent.com/shak789/Car-Recall/master/Calibration.png)
 
 Platt scaling was applied to correct the uncalibrated curves, but it pulled predicted probabilities toward the base recall rate, rather than producing a well-calibrated curve.
 
 ![Formula](https://raw.githubusercontent.com/shak789/Car-Recall/master/Scaling.png)
 
-This demonstrates the interpretation should shift from absolute probabilities to a ranking model with “risk scores” on a scale from 0 to 100. Therefore, vehicles are sorted according to scores, enabling regulators and manufacturers to view vehicles with high risk of recall.
+Due to the uncalibrated probabilities, the interpretation should shift from absolute probabilities to a ranking model with "risk scores" on a scale from 0 to 100. Vehicles are sorted according to scores, enabling regulators and manufacturers to view vehicles with high risk of recall.
 
 Given the shift to ranking, ROC-AUC scoring was used to compare models. The AUC of all models after hyperparameter tuning are listed below: 
 1.	Logistic Regression: 0.717
 2.	Random Forest: 0.689
 3.	XGBoost: 0.681
    
-Since there were small differences in AUC, bootstrap confidence intervals of AUC were computed for each of the models. Logistic regression maintained a statistically significant AUC advantage over XGBoost (95% bootstrap CI on the difference: [0.004, 0.054], excluding 0). The advantage over random forest was smaller and not statistically significant the 95% level (CI: [-0.004, 0.079]).
+Since there were small differences in AUC, 95% confidence intervals (CIs) for both individual AUC scores and pairwise AUC differences were computed using bootstrapping with 2,000 resamples. Each model showed overlapping AUC confidence intervals and all pairwise difference intervals (LR–RF, LR–XGB, and RF–XGB) captured 0, In addition, the absolute values of upper limits and lower limits of the pairwise difference intervals remained below 0.05. This means that there is no statistically significant difference in the AUC between the three models.
 
-Given the intervals are very small, all models were evaluated on whether they could segment vehicle risk scores into priority tiers to ensure the ranking is meaningful.
+The models were evaluated on whether they could segment vehicle risk scores into priority tiers to ensure the ranking is meaningful.
+
+The chart below shows that the risk score for logistic regression is monotonically increasing for every bracket, compared to random forest which has inconsistent changes in recall rate across the tiers. Therefore, logistic regression was chosen as the final model since it can provide meaningful rankings for risk scores and manufacturers and regulators can find value in the model’s outputs.
 
 ![Formula](https://raw.githubusercontent.com/shak789/Car-Recall/master/Segment.png)
 
-This chart shows that the risk score for logistic regression is monotonically increasing for every bracket, compared to random forest which has inconsistent changes in recall rate across the tiers. Therefore, logistic regression was chosen as the final model since it can provide meaningful rankings for risk scores and manufacturers and regulators can find value in the model’s outputs. 
 
 ## Testing on Unseen Data
-The logistic regression model was tested on data from 2022 to 2026. The AUC score decreased to 0.61 on 2022-2026 data. Sinec this is a ranking model used as an early warning system, the AUC remains sufficient because the model's value lies in prioritization and tier categorization rather than precision. A regulator or manufacturer does not need the model to be correct in absolute terms. Instead, they need the model to rank higher-risk vehicles above lower-risk ones, which is confirmed by the cumulative distribution and tier analysis. 
+The logistic regression model was tested on data from 2022 to 2026. The AUC score decreased to 0.63 on 2022-2026 data. 
 
 ![Formula](https://raw.githubusercontent.com/shak789/Car-Recall/master/Segment2.png)
 
-The model’s diminishing performance may be explained by the following:
-1.	Early warning of vehicle recalls: The model is flagging some vehicles as high risk that may not yet have received official recall. There were 31 non-recalled vehicles (approximately 15% of non-recalled vehicles) with risk scores above 70, which explains the decrease in recall rate for vehicles with a risk score of 70-80 and 80-90. This is useful for manufacturers to proactively investigate vehicles rather than wait for NHTSA action. Even if the vehicles are not recalled by NHTSA, the high scores indicate the vehicles have problematic complaints that may reduce sales.
-2.	Complaint accumulation lag: KeyBERT complaint scores decrease for recent years as newer vehicles have not accumulated enough complaints yet, particularly 2025-2026.
-3.The model struggles with predicting risk scores for near-luxury, luxury, or truck models which barely meet complaint volume thresholds and whose owners often bypass NHTSA reporting. American and European Luxury owners (e.g. Mercedes-Benz, BMW, Audi, Cadillac, Lincoln) often visit dealers before filing formal complaints, while truck owners may route issues through maintenance channels. This suppresses complaint volume, causing to the model to have less signal regardless of actual defect prevalence. Future iterations of the model could monitor warranty claims and dealer service visit volumes since NHTSA data alone will not flag these risks.
+The model’s diminishing AUC can be explained by the following:
 
+1.	Early warning of vehicle recalls: The model is flagging some vehicles as high risk that may not yet have received official recall. There were over 25 non-recalled vehicles (approximately 15% of non-recalled vehicles) with risk scores above 70, which explains the decrease in recall rate for vehicles with a risk score of 70-80 and 80-90. This is useful for manufacturers to proactively investigate vehicles rather than wait for NHTSA action. Even if NHTSA does not issue a recall, the high risk scores show that the vehicles have many problematic complaints that can affect consumer trust and sales.
+   
+2.	Complaint accumulation lag: KeyBERT complaint scores decrease for recent years as newer vehicles have not accumulated enough complaints yet, particularly 2025-2026.
+
+3. The model struggles with predicting risk scores for vehicles where the complaint volume narrowly meets thresholds (less 15 complaints), illustrating that owners may bypass NHTSA reporting. The vehicles can be divided into two specific segments:
+   
+A. Luxury/Near-Luxury (e.g. Audi, BMW, Mercedes-Benz, Lincoln): Since luxury buyers expect premium customer care, they likely visit dealerships before escalating issues to the NHTSA.
+
+B. Commercial Fleet (e.g. Chevrolet Silverado, Ford F-150): Owners may route mechanical issues through institutional maintenance channels. These channels will resolve defects significantly faster than using the NHTSA portal since periods without vehicle use can lead to compounding corporate revenue loss.
+
+The model's struggles in predicting risk scores are further illustrated by the following histograms. Both histograms show that the model has assigned higher risk scores to recalled vehicles than non-recalled vehicles and is successfully ranking risk. However, there is an overlap between 40 and 60, showing the model is struggling in discriminating complaints for some vehicle segments (luxury/near-luxury, commercial fleet).
+   
 ![Formula](https://raw.githubusercontent.com/shak789/Car-Recall/master/Cumulative.png)
 
-The cumulative distribution shows that most unrecalled cars are clustering at 0-50 which means the model is correctly giving most unrecalled cars lower scores. 
+The AUC remains sufficient because the model's value lies in prioritizing risk rather than precision. A regulator or manufacturer does not need the model to be correct in absolute terms. Instead, they need the model to rank higher-risk vehicles above lower-risk ones, confirmed by the distributions and recall rate increasing across tiers.
+
 The distribution of scores leads to 3 distinct tiers for evaluating recalls:
 1.	Low Risk (0 - 49): Continue Routine Monitoring
 2.	Medium Risk (50 - 69): Monitor Vehicle Closely
@@ -72,7 +83,4 @@ The SHAP analysis shows three important insights:
 3. The KeyBERT score contributes meaningfully along with the other features. The model is able to find patterns in complaint language that match serious safety defects.
 
 ## Conclusion
-This project provides manufacturers and regulators with an interpretable model for predicting vehicle recall risk. Logistic regression was selected as the final model through a structured process. After applying class weighting and hyperparameter tuning to all model, bootstrap confidence intervals demonstrated that logistic regression had a statistically significant AUC advantage over XGBoost, and the risk-tier analysis showed more consistent, monotonic recall rates than random forest. Combined with the SHAP analysis, manufacturers and regulators can use a meaningful and explainable model, rather than an arbitrarily chosen algorithm.
-Beyond prediction, the model offers practical value. It can be used as an early warning system by flagging vehicles before official NHTSA action, and it distinguishes between "sudden" and "slow burn" recall patterns, which require different monitoring strategies.
-
-
+This project provides manufacturers and regulators with an interpretable model for predicting vehicle recall risk. Logistic regression was selected as the final model through a structured process. After applying class weighting and hyperparameter tuning to all model, bootstrap confidence intervals demonstrated that there was no statistically signifcant difference in the AUC between logistic regression, random forest and XGBoost models. The risk-tier analysis showed more consistent, monotonic recall rates than random forest and XGBoost. Combined with the SHAP analysis, manufacturers and regulators can use a meaningful and explainable model. Beyond prediction, the model offers practical value. It can be used as an early warning system by flagging vehicles before official NHTSA action and the limitations are shown through the complaint patterns of luxury/near-luxury and commercial fleet vehicle owners.
