@@ -65,7 +65,7 @@ B. Commercial Fleet (e.g. Chevrolet Silverado, Ford F-150): Owners may route mec
 
 The model's struggles in predicting risk scores are further illustrated by the following histograms. Both histograms show that the model has assigned higher risk scores to recalled vehicles than non-recalled vehicles and is successfully ranking risk. However, there is an overlap between 40 and 60, showing the model is struggling in discriminating complaints for some vehicle segments (luxury/near-luxury, commercial fleet).
    
-![Formula](https://raw.githubusercontent.com/shak789/Car-Recall/master/Cumulative.png)
+![Formula](https://raw.githubusercontent.com/shak789/Car-Recall/master/Distribution.png)
 
 The AUC remains sufficient because the model's value lies in prioritizing risk rather than precision. A regulator or manufacturer does not need the model to be correct in absolute terms. Instead, they need the model to rank higher-risk vehicles above lower-risk ones, which is confirmed by the distributions and recall rate increasing across tiers.
 
