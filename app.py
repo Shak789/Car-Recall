@@ -1423,18 +1423,5 @@ with tab7:
 
     st.dataframe(runs_display, use_container_width=True, hide_index=True)
 
-    local_time = datetime.now(zoneinfo.ZoneInfo("America/New_York"))
-    
-    st.markdown("---")
-    st.markdown(
-    """
-    <div style='text-align: center; color: #666;'>
-        <p>Last updated: {}</p>
-    </div>
-    """.format(
-        local_time.strftime("%Y-%m-%d %H:%M:%S")
-    ),
-    unsafe_allow_html=True,
-)
 
     
