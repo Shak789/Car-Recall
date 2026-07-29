@@ -8,7 +8,7 @@ This project uses logistic regression to predict vehicle recall risk based on Na
 Please see *Methodology* tab of [Streamlit Dashboard](https://car-recall-tdwo79xn9mnsjauxv3pkbp.streamlit.app/).
 
 ## Full Code
-[Full Project Code](https://github.com/Shak789/Car-Recall/blob/master/Car%20Recall%20Notebook.ipynb).
+[Project Code](https://github.com/Shak789/Car-Recall/blob/master/Car%20Recall%20Notebook.ipynb)
 
 ## Pipeline Architecture
 ![Architecture](https://raw.githubusercontent.com/shak789/Car-Recall/master/Pipeline.png)
