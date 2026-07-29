@@ -43,7 +43,7 @@ The models were evaluated on whether they could segment vehicle risk scores into
 
 The chart below shows that the risk score for logistic regression is monotonically increasing for every bracket, compared to random forest which has inconsistent changes in recall rate across the tiers. Therefore, logistic regression was chosen as the final model since it can provide meaningful rankings for risk scores and manufacturers and regulators can find value in the model’s outputs.
 
-![Formula](https://raw.githubusercontent.com/shak789/Car-Recall/master/Segment.png)
+![Formula](https://raw.githubusercontent.com/shak789/Car-Recall/master/Segmentation_Final.png)
 
 
 ## Testing on Unseen Data
