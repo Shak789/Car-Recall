@@ -13,3 +13,4 @@ sqlalchemy
 python-dotenv 
 psycopg2-binary
 mlflow
+protobuf 
