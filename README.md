@@ -53,7 +53,7 @@ The model’s diminishing AUC can be explained by the following:
 
 1.	Early warning of vehicle recalls: The model is flagging some vehicles as high risk that may not yet have received official recall. There were over 25 non-recalled vehicles (approximately 15% of non-recalled vehicles) with risk scores above 70. This is shown by the slight plateau in recall rate for vehicles with a risk score of 70-80 in the diagram below. The early warning system is useful for manufacturers to proactively investigate vehicles rather than wait for NHTSA action. Even if NHTSA does not issue a recall, the high risk scores show that the vehicles have many problematic complaints that can affect consumer trust and sales.
 
-![Formula](https://raw.githubusercontent.com/shak789/Car-Recall/master/Segment2.png)
+   ![Formula](https://raw.githubusercontent.com/shak789/Car-Recall/master/Segment2.png)
    
 2.	Complaint accumulation lag: KeyBERT complaint scores decrease for recent years as newer vehicles have not accumulated enough complaints yet, particularly 2025-2026.
 
