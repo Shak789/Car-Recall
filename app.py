@@ -3,7 +3,7 @@ import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
-from sqlalchemy import create_engine
+from sqlalchemy import create_enginef
 import os
 from dotenv import load_dotenv
 
@@ -683,7 +683,7 @@ with tab3:
     st.markdown(
         f"<div style='color: #8b8fa8; font-size: 14px;'>"
         f"The following vehicles have a score above 70 but no active NHTSA recalls. High scores can indicate a pattern of problematic complaints and strong potential for recall.\
-            Manufacturers should prioritize these vehicles as investigation candidates, since vehicle recalls can take months or years to emerge after early consumer complaints. Even if NHTSA does not issue a recall, the high risk scores show that the vehicles have many problematic complaints that can affect consumer trust and sales."
+            Manufacturers should prioritize these vehicles as investigation candidates, since recalls can take months or years to emerge after early consumer complaints. Even if NHTSA does not issue a recall, the high risk scores show that the vehicles have many problematic complaints that can affect consumer trust and sales."
         f"</div>",
         unsafe_allow_html=True
     )
