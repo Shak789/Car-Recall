@@ -12,6 +12,6 @@ lxml
 sqlalchemy
 python-dotenv 
 psycopg2-binary
-protobuf==3.20.3
-mlflow==2.11.3
+mlflow>=2.19.0
+protobuf>=4.21.0
 setuptools 
