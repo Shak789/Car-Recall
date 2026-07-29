@@ -10,3 +10,4 @@ shap
 joblib
 lxml
 sqlalchemy
+python-dotenv 
