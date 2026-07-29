@@ -70,7 +70,7 @@ The model's struggles in predicting risk scores are further illustrated by the f
    
 ![Formula](https://raw.githubusercontent.com/shak789/Car-Recall/master/Distribution.png)
 
-The AUC remains sufficient because the model's value lies in prioritizing risk rather than precision. A regulator or manufacturer does not need the model to be correct in absolute terms. Instead, they need the model to rank higher-risk vehicles above lower-risk ones, which is confirmed by the distributions and recall rate increasing across tiers.
+The model's primary value still lies in ranking recall risk rather than predicting recalls with absolute certainty. Regulators and manufacturers do not necessarily need perfectly calibrated predictions. Instead, they need the model to rank higher-risk vehicles above lower-risk ones, which is confirmed by the distributions and recall rate increasing across tiers.
 
 The distribution of scores leads to 3 distinct tiers for evaluating recalls:
 1.	Low Risk (0 - 49): Continue Routine Monitoring
