@@ -250,7 +250,7 @@ with tab1:
             - Medium Risk (50 - 69): Monitor Vehicle Closely
             - High Risk (70 - 100): Investigate Immediately
                      
-            **Note:** To ensure statistical accuracy, only vehicles with **at least 10 complaints** are included in this dashboard.
+            **Note:** To ensure statistical accuracy, only vehicles with **at least 5 complaints** are included in this dashboard.
                      
             A machine learning model (logistic regression) calculates the risk score by evaluating specific data points extracted from each complaint:
                      
@@ -415,7 +415,7 @@ with tab1:
         
         <!-- Footprint text at the bottom -->
         <div style="color: #6b7280; font-size: 13px; opacity: 0.95; line-height: 1.3;">
-            Designed to prioritize risk; effectiveness may vary across vehicle segments. Dashboard only includes vehicles with 10+ complaints to prevent low sample sizes.
+            Designed to rank recall risk. Effectiveness may vary across vehicle segments. Dashboard only includes vehicles with 5+ complaints to prevent low sample sizes.
         </div>
 
                 
