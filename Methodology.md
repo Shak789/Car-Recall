@@ -1,6 +1,8 @@
 ## Overview
 This project uses logistic regression to predict vehicle recall risk based on National Highway Traffic Safety Administration (NHTSA) consumer complaint data. It can also be extended to identify vehicles at risk of recall before official action is taken by the NHTSA, as well as determine which features lead to recalls.
 
+The full project code can be found [here](https://github.com/Shak789/Car-Recall/blob/master/Car%20Recall%20Notebook.ipynb).
+
 ## Data Sources
 [NHTSA Datasets](https://www.nhtsa.gov/nhtsa-datasets-and-apis): Complaint and recall information. Complaints are aggregated by vehicle make, model and year and merged with recall data. A vehicle is considered recalled if NHTSA has issued a recall for that specific make, model and year at least once.
 Since the complaint dataset was not merged with recalls by vehicle component, over 85% of complaint profiles are matched to recalls. While predicting recalls based on vehicle components would decrease the imbalance, it also significantly reduces the sample size per group since complaints span many components. This would reduce the signal from features needed to predict recall.
