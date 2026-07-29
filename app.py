@@ -936,7 +936,7 @@ with tab7:
     st.header("Current Model Performance")
 
     st.markdown("""
-    This page shows the vehicle recall model's performance over time. It displays the following metrics and determines if there is any significnat drift:
+    This page shows the vehicle recall model's performance over time. It displays the following metrics and determines if there is any significant drift:
     - Risk Score Segmentation
     - Keyword Score Separation
     - Feature Importance (SHAP)               
