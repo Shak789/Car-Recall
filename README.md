@@ -57,7 +57,8 @@ The model’s diminishing AUC can be explained by the following:
    
 2.	Complaint accumulation lag: KeyBERT complaint scores decrease for recent years as newer vehicles have not accumulated enough complaints yet, particularly 2025-2026.
 
-3. The model struggles with predicting risk scores for vehicles where the complaint volume narrowly meets thresholds (less 15 complaints), illustrating that owners may bypass NHTSA reporting. The vehicles can be divided into two specific segments:
+## Model Limitations
+The model struggles with predicting risk scores for vehicles where the complaint volume narrowly meets thresholds (less 15 complaints), illustrating that owners may bypass NHTSA reporting. The vehicles can be divided into two specific segments:
    
 A. Luxury/Near-Luxury (e.g. Audi, BMW, Mercedes-Benz, Lincoln): Since luxury buyers expect premium customer care, they likely visit dealerships before escalating issues to the NHTSA.
 
