@@ -1423,7 +1423,7 @@ with tab7:
 
     st.dataframe(runs_display, use_container_width=True, hide_index=True)
 
-    local_time = datetime.now(zoneinfo.ZoneInfo("America/New_York)
+    local_time = datetime.now(zoneinfo.ZoneInfo("America/New_York"))
     
     st.markdown("---")
     st.markdown(
