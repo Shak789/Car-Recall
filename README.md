@@ -60,9 +60,9 @@ The model’s diminishing AUC can be explained by the following:
 ## Model Limitations
 The model struggles with predicting risk scores for vehicles where the complaint volume narrowly meets thresholds (less 15 complaints), illustrating that owners may bypass NHTSA reporting. The vehicles can be divided into two specific segments:
    
-A. Luxury/Near-Luxury (e.g. Audi, BMW, Mercedes-Benz, Lincoln): Since luxury buyers expect premium customer care, they likely visit dealerships before escalating issues to the NHTSA.
+1. Luxury/Near-Luxury (e.g. Audi, BMW, Mercedes-Benz, Lincoln): Since luxury buyers expect premium customer care, they likely visit dealerships before escalating issues to the NHTSA.
 
-B. Commercial Fleet (e.g. Chevrolet Silverado, Ford F-150): Owners may route mechanical issues through institutional maintenance channels. These channels will resolve defects significantly faster than using the NHTSA portal since periods without vehicle use can lead to compounding revenue loss.
+2. Commercial Fleet (e.g. Chevrolet Silverado, Ford F-150): Owners may route mechanical issues through institutional maintenance channels. These channels will resolve defects significantly faster than using the NHTSA portal since periods without vehicle use can lead to compounding revenue loss.
 
 The model's struggles in predicting risk scores are further illustrated by the following histograms. Both histograms show that the model has assigned higher risk scores to recalled vehicles than non-recalled vehicles and is successfully ranking risk. However, there is an overlap between 40 and 60, showing the model is struggling in discriminating complaints for some vehicle segments (luxury/near-luxury, commercial fleet).
    
