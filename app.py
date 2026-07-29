@@ -1309,7 +1309,7 @@ with tab7:
         
         rename_map = {
             'shap_keybert_safety_score': 'Keyword Score',
-            'shap_median_mileage': 'Median Mieage',
+            'shap_median_mileage': 'Median Mileage',
             'shap_complaints_first_12m_ratio': 'Complaint Ratio (First 12 months)'
         }
 
