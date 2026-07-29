@@ -892,7 +892,7 @@ with tab5:
     """, unsafe_allow_html=True)
 
 with tab6:
-    with open("README.md", "r", encoding="utf-8") as f:
+    with open("Methodology.md", "r", encoding="utf-8") as f:
         st.markdown(f.read())
 
 import streamlit as st
