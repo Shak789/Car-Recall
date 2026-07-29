@@ -1,35 +1,48 @@
 
 
-import streamlit as st
 import pandas as pd
 import numpy as np
 import shap
 import plotly.express as px
 import plotly.graph_objects as go
+import streamlit as st
+from sqlalchemy import create_engine
+import psycopg2
+import os
+from dotenv import load_dotenv
 
 st.set_page_config(
     page_title="Vehicle Recall Risk Predictor",
     layout="wide"
 )
 
-# ── load data and models ──────────────────────────────────────────
+
+query = '''SELECT* FROM result'''
+
+load_dotenv() 
+
+host=os.environ['SUPABASE_HOST']
+database=os.environ['SUPABASE_DB']
+user=os.environ['SUPABASE_USER']
+password=os.environ['SUPABASE_PASSWORD']
+port=os.environ['SUPABASE_PORT']
+
+
+connection_string = f'postgresql+psycopg2://{user}:{password}@{host}:{port}/{database}?sslmode=require'
+
+engine = create_engine(connection_string)
+
+
 @st.cache_data
 def load_data():
-    final_df = pd.read_csv("result.csv")
-    raw_df = pd.read_csv("complaints_raw.csv")
-    raw_df["FAILDATE"] = pd.to_datetime(raw_df["FAILDATE"], errors="coerce")
-    return final_df, raw_df
+    with engine.connect() as connection:
+        final_df = pd.read_sql(query, connection)
+
+        return final_df
 
 
-#@st.cache_resource
-#def load_model():
-    lr = joblib.load("lr_model.pkl")
-    explainer = shap.LinearExplainer(lr)
-    return lr, explainer
 
-
-final_df, raw_df = load_data()
-#lr, explainer = load_model()
+final_df = load_data()
 
 FEATURES = [
     "complaints_per_day",
@@ -208,7 +221,7 @@ def render_risk_gauge(risk_score, title="Recall Risk Score"):
     </style>
     """, unsafe_allow_html=True)
 
-tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["Vehicle Profile", "Full Rankings", "Non-Recalled High Risk Vehicles", "Manufacturer Data", "Insights", "Methodology"])
+tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs(["Vehicle Profile", "Full Rankings", "Non-Recalled High Risk Vehicles", "Manufacturer Data", "Insights", "Methodology", "Model Performance"])
 
 with tab1:
 
@@ -284,11 +297,6 @@ with tab1:
         (final_df["YEAR"] == selected_year)
     ]
 
-    raw_vehicle = raw_df[
-        (raw_df["MAKE"] == selected_make) &
-        (raw_df["MODEL"] == selected_model) &
-        (raw_df["YEAR"] == selected_year)
-    ]
 
     if vehicle.empty:
         st.warning("No data found for this vehicle combination.")
@@ -433,10 +441,10 @@ with tab1:
     st.markdown("<br>", unsafe_allow_html=True)
 
     # ── shap + complaints over time ───────────────────────────────────
-    col_shap, col = st.columns([1, 1])
+    col_shap = st.columns([1])
 
 
-    with col_shap:
+    with col_shap[0]:
         st.markdown(
             '<div class="section-header" style="margin-top: 0px;">What drives this prediction</div>', 
             unsafe_allow_html=True
@@ -493,51 +501,7 @@ with tab1:
         </style>
         """, unsafe_allow_html=True)
 
-    with col:
-        # ── map ───────────────────────────────────────────────────────────
-        st.markdown(
-            '<div class="section-header" style="margin-top: 0px;">Complaint Distribution by State</div>', 
-            unsafe_allow_html=True
-        )
-
-        if not raw_vehicle.empty and "STATE" in raw_vehicle.columns:
-            state_counts = (
-                raw_vehicle.dropna(subset=["STATE"])
-                .groupby("STATE")
-                .size()
-                .reset_index(name="complaint_count")
-            )
-
-            fig_map = px.choropleth(
-                state_counts,
-                locations="STATE",
-                locationmode="USA-states",
-                color="complaint_count",
-                scope="usa",
-                color_continuous_scale="Reds",
-                labels={"complaint_count": "Complaints"},
-            )
-            fig_map.update_layout(
-                paper_bgcolor="#1c1f26",
-                geo_bgcolor="#1c1f26",
-                font_color="white",
-                height=400,
-                margin=dict(l=0, r=0, t=0, b=0),
-                coloraxis_colorbar=dict(tickfont=dict(color="white")),
-            )
-            with st.container(key="map"):
-                st.plotly_chart(fig_map, use_container_width=True)
-        else:
-            st.info("No state data available for this vehicle.")
-
-        st.markdown("""
-        <style>
-        div.st-key-map {
-            margin-top: -10px;
-        }
-        </style>
-        """, unsafe_allow_html=True)
-        
+   
         
     # ── footer ────────────────────────────────────────────────────────
     st.markdown("""<div style="margin-top: -40px; text-align: center; width: 100%;">
@@ -935,4 +899,538 @@ with tab6:
     with open("README.md", "r", encoding="utf-8") as f:
         st.markdown(f.read())
 
+import streamlit as st
+import mlflow
+import pandas as pd
+import numpy as np
+import plotly.express as px
+import plotly.graph_objects as go
+from PIL import Image
+from datetime import datetime
+import tempfile
+import os
+
+with tab7:
+   
+   
+    mlflow.set_tracking_uri("databricks")
+   
+    # Fetch MLflow runs
+    mlflow.set_experiment("/Users/shakjivraj87@gmail.com/Car Recall Pipeline Prod")
+    
+    try:
+        runs = mlflow.search_runs(
+            experiment_names=["/Users/shakjivraj87@gmail.com/Car Recall Pipeline Prod"],
+            order_by=["start_time DESC"],
+            max_results=7
+        )
+       
+        if runs.empty:
+            st.error("No MLflow runs found.")
+            st.stop()
+           
+    except Exception as e:
+        st.error(f"Error connecting to MLflow: {str(e)}")
+        st.stop()
+
+    # Get latest run
+    latest_run = runs.iloc[0]
+    run_id = latest_run.run_id
+
+    st.header("Current Model Performance")
+
+    st.markdown("""
+    This page shows the vehicle recall model's performance over time. It displays the following metrics and determines if there is any significnat drift:
+    - Risk Score Segmentation
+    - Keyword Score Separation
+    - Feature Importance (SHAP)               
+    """)
+
+    latest_run['start_time'] = (
+    pd.to_datetime(latest_run['start_time'])
+    .tz_convert('America/New_York')
+    .strftime('%Y-%m-%d %H:%M:%S')
+    )
+   
+    st.header("General Information")
+    st.markdown(f"*Latest run: {pd.to_datetime(latest_run['start_time']).strftime('%Y-%m-%d %H:%M:%S')}*")
+
+    col2, col3, col4 =  st.columns([1.5, 1.0, 1.3])
+
+    with col2:
+        st.metric("Model Type", "Logistic Regression")
+
+    with col3:
+        st.metric("Complaint Threshold", 5)
+
+    with col4:
+        total_runs = len(runs)
+        st.metric("Total Runs", total_runs)
+
+    st.markdown("---")
+
+    st.header("Risk Score Segmentation Plot - Latest Run")
+
+    try:
+        # Download calibration plot
+        with tempfile.TemporaryDirectory() as tmpdir:
+            plot_path = mlflow.artifacts.download_artifacts(
+                run_id=run_id,
+                artifact_path="calibration_plot.png",
+                dst_path=tmpdir
+            )
+
+            left_space, image_container = st.columns([1.7, 0.75])
+
+            with left_space:
+                st.image(
+                    plot_path,
+                    caption=f"Segmentation Plot - {pd.to_datetime(latest_run['start_time']).strftime('%Y-%m-%d')}",
+                    use_container_width=True
+                )
+
+            st.markdown("""
+            This graph shows the vehicle recall rates for each risk score bracket.
+                           
+            **Ideal Calibration:**
+            - The vehicle recall rate must steadily increase across each risk score bracket to establish a clear distinction between risk score values.
+            - The baseline recall rate for the lowest-risk bracket should be significantly lower that the recall rate for the 90-100 bracket.
+                       
+            **Notes:**
+            - There may be a slight flattening/decrease in recall rate for risk scores between 70 and 90, since there may be
+            high risk vehicles that have not yet been recalled.
+            - Lower risk score brackets may have still show high recall rates (70%) due to a high proportion of recalled vehicles in dataset.
+           
+            **Warning Signs:**
+            - Decreasing recall rates over risk score brackets, which causes the risk score ranking to lose value.
+            """)
+               
+    except Exception as e:
+        st.warning(f"⚠️ Could not load calibration plot: {str(e)}")
+
+    st.markdown("---")
+
+    st.header("Risk Score Segmentation Trends")
+
+    
+    query = '''SELECT* FROM calibration_history'''
+    with engine.connect() as connection:
+        combined_cal = pd.read_sql(query, connection)
+
+    #combined_cal = pd.read_csv("risk_score_segmentation.csv")
+        
+    if not combined_cal.empty:
+        combined_cal['true_recall_rate'] = combined_cal['true_recall_rate'] * 100
+        combined_cal["run_date"] = pd.to_datetime(combined_cal["run_date"]).dt.normalize()
+
+        risk_colors = {
+            "90-100": "#FF3333",   # Bright Crimson Red
+            "80-90": "#FF6633",    # Vibrant Red-Orange
+            "70-80": "#FF9933",    # Deep Orange
+            "60-70": "#FFCC33",    # Amber Yellow
+            "50-60": "#E0E0E0",    # Light Slate Gray
+            "Under 50": "#9E9E9E"  # Darker Muted Gray
+        }
+        
+    # Create line chart
+    fig_cal = px.line(
+        combined_cal,
+        x='run_date',
+        y='true_recall_rate',
+        color='risk_bracket',
+        title='Actual Recall Rate by Predicted Risk Bracket',
+        labels={'risk_bracket': 'Risk Bracket', 'true_recall_rate': 'Actual Recall Rate', 'run_date': 'Date'},
+        color_discrete_map=risk_colors,
+        markers=True,
+        hover_data={
+            'run_date': False, 
+            'risk_bracket': True,  
+            'true_recall_rate': ':.2f'  
+        })
+
+    fig_cal.update_traces(
+        hovertemplate="%{y:.2f}%"
+    )
+        
+        
+    
+    fig_cal.update_layout(
+        hovermode='x unified',
+        height=500,
+        xaxis=dict(
+            tickformat="%Y-%m-%d",
+            dtick=86400000.0  
+        ),
+        yaxis=dict(
+            range=[60, 105]
+        ),
+        legend=dict(
+            title_text='Risk Bracket',     
+            traceorder='reversed'          
+        )
+    )
+    
+    st.plotly_chart(fig_cal, use_container_width=True)
+    
+    st.subheader("Risk Score Segmentation Drift Detection")
+
+    date_sort = combined_cal.sort_values(by='run_date', ascending=True).reset_index(drop = True)
+
+
+    if len(date_sort) >= 12:
+        first_six = date_sort.iloc[:6]
+        last_six = date_sort.iloc[-6:]
+        
+        drift_detected = False
+        drift_alerts = []
+        
+        for bracket in first_six['risk_bracket'].unique():
+            print(last_six)
+            latest_rate = last_six[last_six['risk_bracket'] == bracket]['true_recall_rate'].values[0]
+            oldest_rate = first_six[first_six['risk_bracket'] == bracket]['true_recall_rate'].values[0]
+            drift = abs(latest_rate - oldest_rate)
+            
+            if drift > 5.0:  
+                drift_detected = True
+
+        
+            drift_alerts.append({
+                'Risk Bracket': bracket,
+                'Initial Rate': f"{oldest_rate:.2f}%",
+                'Current Rate': f"{latest_rate:.2f}%",
+                'Drift': f"{drift:+.2f}%"
+            })
+
+
+        drift_df = pd.DataFrame(drift_alerts)
+
+        def highlight_drift(row):
+            drift_val = float(row['Drift'].replace('%', ''))
+            if abs(drift_val) > 5:
+                return ['background-color: #7f1d1d; color: white'] * len(row)
+            return [''] * len(row)
+
+        styled_df = drift_df.style.apply(highlight_drift, axis=1)
+
+        st.dataframe(styled_df, use_container_width=True, hide_index=True)
+
+        if drift_detected:
+            st.warning("⚠️ Significant drift in risk score segmentation detected!")
+        else:
+            st.success("Risk score segmentation is stable.")
+        
+
+    else:
+        st.info("Not enough data to show score segmentation trends.")
+    
+   
+
+    st.markdown("---")
+
+    
+    st.header("Keyword Score Trends")
+
+    st.markdown("""
+    The keyword score determines the overlap of keywords within descriptions that strongly correlate with historical recalls.
+    In order for the score to be useful in predicting recalls, there should be a clear ratio between the median scores of complaints
+    between recalled and non-recalled vehicles (ideal threshold of greater than 1.5). 
+                """)
+
+    keyword_score_history = pd.DataFrame({
+        'run_date': pd.to_datetime(runs['start_time']),
+        'Median_Recalled_Keyword_Score': runs['metrics.recall_keybert'],
+        'Median_Non_Recalled_Keyword_Score': runs['metrics.no_recall_keybert'],
+        'run_id': runs['run_id']
+    }).sort_values('run_date')
+
+    keyword_score_history["run_date"] = (
+    pd.to_datetime(keyword_score_history["run_date"])
+    .dt.tz_convert('America/New_York')
+    .dt.normalize()
+    )
+    keyword_score_history['Ratio'] = keyword_score_history['Median_Recalled_Keyword_Score'] / keyword_score_history['Median_Non_Recalled_Keyword_Score'] 
+
+    
+    fig_keyword_score = px.line(
+    keyword_score_history,
+    x='run_date',
+    y='Ratio',
+    title="Ratio of Median Keyword Score between Recalled and Non-Recalled Vehicles",
+    hover_data={
+            'Median_Recalled_Keyword_Score': ':.2f',
+             'Median_Non_Recalled_Keyword_Score': ':.2f',
+             'Ratio': ':.2f'
+        },
+    labels={
+        'Ratio': 'Ratio',
+        'Median_Recalled_Keyword_Score': 'Median Recalled Keyword Score',
+        'Median_Non_Recalled_Keyword_Score': 'Median Non-Recalled Keyword Score'
+    },
+
+    markers=True
+    )
+    
+        
+
+    fig_keyword_score.for_each_trace(lambda t: t.update(name=t.name.replace('_', ' ').replace('Non Recalled', 'Non-Recalled'), 
+                                                        line=dict(color='firebrick' if 'Non_Recalled' in t.name else 'royalblue', width=2)))
+
+    fig_keyword_score.update_traces(
+    hovertemplate="<br>".join([
+        "Ratio: %{y:.2f}",
+        "Recalled Median: %{customdata[0]:.2f}",
+        "Non-Recalled Median: %{customdata[1]:.2f}"
+    ])
+    )
+
+
+    fig_keyword_score.update_layout(
+        xaxis=dict(
+            tickformat="%Y-%m-%d",
+            dtick=86400000.0  
+        ),
+        xaxis_title="Date",
+        yaxis_title="Ratio",
+        hovermode="x unified",
+        showlegend=False
+    )
+
+    fig_keyword_score.add_hline(
+        y=1.5,
+        line_dash="dash",
+        line_color="red",
+        annotation_text=f"Threshold (1.5)",
+        annotation_position="right"
+    )
+
+    # Render in Streamlit
+    st.plotly_chart(fig_keyword_score, use_container_width=True)
+
+
+    keyword_score_history = keyword_score_history.dropna()
+
+   
+
+    keyword_score_history = keyword_score_history.sort_values(by='run_date', ascending=True).reset_index(drop = True)
+    
+    st.subheader("Keyword Score Drift Detection")
+
+    if len(keyword_score_history) > 2:
+
+        first = keyword_score_history.iloc[0]
+        last = keyword_score_history.iloc[-1]
+        
+        drift_alerts = []
+
+        first_ratio = first['Median_Recalled_Keyword_Score'] / first['Median_Non_Recalled_Keyword_Score']
+        latest_ratio = last['Median_Recalled_Keyword_Score'] / last['Median_Non_Recalled_Keyword_Score']
+        
+        drift = latest_ratio - first_ratio
+        percentage_change = (latest_ratio - first_ratio) / abs(first_ratio) * 100
+
+        col1, col2, col3, col4 = st.columns(4)
+        with col1:
+            st.metric("Initial Ratio", f"{first_ratio:.2f}")
+        with col2:
+            st.metric("Current Ratio", f"{latest_ratio:.2f}", delta=f"{percentage_change:+.1f}%")
+        with col3:
+            st.metric("Change in Ratio", f"{drift:+.2f}")
+        with col4:
+            keyword_score_history['ratio_7day_avg'] = keyword_score_history['Ratio'].rolling(window= 7, min_periods=1).mean()
+            ratio_rolling = keyword_score_history['ratio_7day_avg'].iloc[-1]
+            st.metric("Ratio 7-day average", f"{ratio_rolling:.2f}")
+
+
+        if keyword_score_history['Ratio'].iloc[-1] < 1.5:
+            st.warning(f"⚠️ Ratio below threshold (1.5)")
+        
+        drift_alerts.append({
+            'Initial Rate': f"{first_ratio:.2f}",
+            'Current Rate': f"{latest_ratio:.2f}",
+            'Drift': f"{percentage_change:+.2f}%"
+        })
+
+        drift_df = pd.DataFrame(drift_alerts)
+
+        def highlight_drift(row):
+            drift_val = float(row['Drift'].replace('%', ''))
+            if drift_val <= -15:
+                return ['background-color: #7f1d1d; color: white'] * len(row)
+            return [''] * len(row)
+
+        styled_df = drift_df.style.apply(highlight_drift, axis=1)
+
+        st.dataframe(styled_df, use_container_width=True, hide_index=True)
+
+        if percentage_change <= -15:
+            st.warning("⚠️ Significant drift in keyword score detected!")
+        else:
+            st.success("Keyword score is stable.")
+    else:
+        st.info("Not enough data to show keyword score trends.")
+    
+
+    st.header("SHAP Analysis")
+
+    st.markdown("""
+                SHAP values indicate how much a vehicle's risk score changes when a specific feature value (keyword score, median mileage, complaint ratio) is included compared to when the feature value was missing.
+                """)
+
+
+    st.subheader("Latest SHAP Summary")
+    try:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            shap_plot_path = mlflow.artifacts.download_artifacts(
+                run_id=run_id,
+                artifact_path="shap_summary_plot.png",
+                dst_path=tmpdir
+            )
+            st.image(shap_plot_path, use_container_width=True)
+    except Exception as e:
+        st.warning(f"⚠️ Could not load SHAP plot: {str(e)}")
+
+    st.subheader("SHAP Value Trends")
+
+    shap_df = pd.DataFrame({
+        'run_date': pd.to_datetime(runs['start_time']),
+        'shap_keybert_safety_score': runs['metrics.shap_keybert_safety_score'],
+        'shap_median_mileage': runs['metrics.shap_median_mileage'],
+        'shap_complaints_first_12m_ratio': runs['metrics.shap_complaints_first_12m_ratio'],
+        'run_id': runs['run_id']
+    }).sort_values('run_date')
+
+    shap_df = shap_df.dropna()
+
+    shap_df["run_date"] = (
+    pd.to_datetime(shap_df["run_date"])
+    .dt.tz_convert('America/New_York')
+    .dt.normalize()
+    )
+
+    shap_features = ['shap_keybert_safety_score', 'shap_median_mileage', 'shap_complaints_first_12m_ratio']
+    
+    if not shap_df.empty:
+        
+        rename_map = {
+            'shap_keybert_safety_score': 'Keyword Score',
+            'shap_median_mileage': 'Median Mieage',
+            'shap_complaints_first_12m_ratio': 'Complaint Ratio (First 12 months)'
+        }
+
+        color_map = {
+            'Keyword Score': '#00CC96',        # teal green
+            'Median Mileage': '#636EFA',       # indigo blue
+            'Complaint Ratio (First 12 months)': '#EF553B'  # coral red
+        }
+
+        fig_shap = px.line(
+            shap_df,
+            x='run_date',
+            y=shap_features,
+            title='SHAP Feature Importance Over Time',
+            markers=True
+        )
+
+        fig_shap.for_each_trace(lambda t: t.update(
+            name=rename_map.get(t.name, t.name),
+            line=dict(color=color_map.get(rename_map.get(t.name, t.name))),
+            marker=dict(color=color_map.get(rename_map.get(t.name, t.name))),
+            hovertemplate=f"{rename_map.get(t.name, t.name)}: %{{y:.2f}}<extra></extra>"
+        ))
+
+        fig_shap.update_layout(
+            xaxis_title="Date",
+            yaxis_title="Median |SHAP Value|",
+            hovermode='x unified',
+            height=400,
+            legend_title_text='SHAP Feature',
+            xaxis=dict(
+                tickformat="%Y-%m-%d",
+                dtick=86400000.0
+            ),
+            yaxis=dict(
+                range=[0, 1]
+            )
+        )
+        
+        st.plotly_chart(fig_shap, use_container_width=True)
+
+        st.subheader("SHAP Values Drift Detection")
+
+        
+        # Feature importance shift detection
+        if len(shap_df['run_date'].unique()) >= 2:
+
+            drift_detected = False
+            
+            latest_shap = shap_df[shap_df['run_date'] == shap_df['run_date'].max()]
+            oldest_shap = shap_df[shap_df['run_date'] == shap_df['run_date'].min()]
+            
+            shift_data = []
+            for feature in shap_features:
+                feature_display = rename_map.get(feature, feature)
+                latest_imp = latest_shap[f'{feature}'].iloc[0]
+                oldest_imp = oldest_shap[f'{feature}'].iloc[0]
+                
+                percentage_change = ((latest_imp - oldest_imp) / oldest_imp) * 100
+                shift_data.append({
+                    'Feature': feature_display,
+                    'Previous': f"{oldest_imp:.2f}",
+                    'Current': f"{latest_imp:.2f}",
+                    'Drift': f"{percentage_change:+.2f}%"
+                })
+
+                print(percentage_change)
+
+                if abs(percentage_change) >= 15:
+                    drift_detected = True
+        
+
+            drift_df = pd.DataFrame(shift_data)
+
+            def highlight_drift(row):
+                percentage_change = float(row['Drift'].replace('%', ''))
+                if abs(percentage_change) >= 15:
+                    return ['background-color: #7f1d1d; color: white'] * len(row)
+                return [''] * len(row)
+
+            styled_df = drift_df.style.apply(highlight_drift, axis=1)
+
+            st.dataframe(styled_df, use_container_width=True, hide_index=True)
+
+            if drift_detected:
+                st.warning("⚠️ Significant drift in SHAP values detected!")
+            else:
+                st.success("SHAP values are stable.")
+
+        else:
+            st.info("Not enough data to show SHAP value trends.")
+
+
+    else:
+        st.info("SHAP importance metrics not available. Update notebook to log SHAP feature importance.")
+
+    st.markdown("---")
+
+    # ==================== SECTION 6: Recent Runs Table ====================
+    st.header("Recent Model Runs")
+
+    # Prepare runs table
+    runs_display = runs[['start_time','params.model_type', 'tags.mlflow.runName', 'run_id']].copy()
+    runs_display.columns = ['Run Date', 'Model Type', 'Run Name', 'Run ID']
+    runs_display["Run Date"] = (
+    pd.to_datetime(runs_display["Run Date"])
+    .dt.tz_convert('America/New_York')
+    .dt.normalize()
+    )
+    runs_display = runs_display.head(15)
+
+    st.dataframe(runs_display, use_container_width=True, hide_index=True)
+    
+    st.markdown("---")
+    st.markdown("""
+        <div style='text-align: center; color: #666;'>
+            <p>Last updated: {}</p>
+        </div>
+    """.format(datetime.now().strftime('%Y-%m-%d %H:%M:%S')), unsafe_allow_html=True)
     
