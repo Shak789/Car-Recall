@@ -11,4 +11,5 @@ joblib
 lxml
 sqlalchemy
 python-dotenv 
-psycopg2-binary 
+psycopg2-binary
+mlflow
