@@ -3,7 +3,7 @@ import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
-from sqlalchemy import create_enginef
+from sqlalchemy import create_engine
 import os
 from dotenv import load_dotenv
 
