@@ -1,13 +1,9 @@
-
-
 import pandas as pd
 import numpy as np
-import shap
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 from sqlalchemy import create_engine
-import psycopg2
 import os
 from dotenv import load_dotenv
 
