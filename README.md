@@ -49,15 +49,15 @@ The chart below shows that the risk score for logistic regression is monotonical
 ## Testing on Unseen Data
 The logistic regression model was tested on data from 2022 to 2026. The AUC score decreased to 0.63 on 2022-2026 data. 
 
-![Formula](https://raw.githubusercontent.com/shak789/Car-Recall/master/Segment2.png)
-
 The model’s diminishing AUC can be explained by the following:
 
-1.	Early warning of vehicle recalls: The model is flagging some vehicles as high risk that may not yet have received official recall. There were over 25 non-recalled vehicles (approximately 15% of non-recalled vehicles) with risk scores above 70, which explains the non-increase in recall rate for vehicles with a risk score of 70-80. This is useful for manufacturers to proactively investigate vehicles rather than wait for NHTSA action. Even if NHTSA does not issue a recall, the high risk scores show that the vehicles have many problematic complaints that can affect consumer trust and sales.
-   
-2.	Complaint accumulation lag: KeyBERT complaint scores decrease for recent years as newer vehicles have not accumulated enough complaints yet, particularly 2025-2026.
+1.	Early warning of vehicle recalls: The model is flagging some vehicles as high risk that may not yet have received official recall. There were over 25 non-recalled vehicles (approximately 15% of non-recalled vehicles) with risk scores above 70. This is shown by the slight plateau in recall rate for vehicles with a risk score of 70-80 in the diagram below. The early warning system is useful for manufacturers to proactively investigate vehicles rather than wait for NHTSA action. Even if NHTSA does not issue a recall, the high risk scores show that the vehicles have many problematic complaints that can affect consumer trust and sales.
 
-3. The model struggles with predicting risk scores for vehicles where the complaint volume narrowly meets thresholds (less 15 complaints), illustrating that owners may bypass NHTSA reporting. The vehicles can be divided into two specific segments:
+![Formula](https://raw.githubusercontent.com/shak789/Car-Recall/master/Segment2.png)
+   
+3.	Complaint accumulation lag: KeyBERT complaint scores decrease for recent years as newer vehicles have not accumulated enough complaints yet, particularly 2025-2026.
+
+4. The model struggles with predicting risk scores for vehicles where the complaint volume narrowly meets thresholds (less 15 complaints), illustrating that owners may bypass NHTSA reporting. The vehicles can be divided into two specific segments:
    
 A. Luxury/Near-Luxury (e.g. Audi, BMW, Mercedes-Benz, Lincoln): Since luxury buyers expect premium customer care, they likely visit dealerships before escalating issues to the NHTSA.
 
