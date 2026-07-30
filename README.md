@@ -11,4 +11,4 @@ Please see *Methodology* tab of [Streamlit Dashboard](https://car-recall-tdwo79x
 [Project Code](https://github.com/Shak789/Car-Recall/blob/master/Car%20Recall%20Notebook.ipynb)
 
 ## Pipeline Architecture
-![Architecture](https://raw.githubusercontent.com/shak789/Car-Recall/master/Pipeline.png)
+![Architecture](https://raw.githubusercontent.com/shak789/Car-Recall/master/images/Pipeline.png)

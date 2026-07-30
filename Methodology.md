@@ -26,11 +26,11 @@ Three models (logistic regression, random forest, XGBoost) were trained and test
 
 The diagrams show that each of the models are uncalibrated and underpredicting the probability of recall when class weighting is used. The Brier scores of approximately 0.2 indicate a root-mean-squared probability error of approximately 45% relative to the actual outcomes. However, if class weighting is removed, the model will collapse into predicting the majority class, which renders the probabilities meaningless.
 
-![Formula](https://raw.githubusercontent.com/shak789/Car-Recall/master/Calibration.png)
+![Formula](https://raw.githubusercontent.com/shak789/Car-Recall/master/Images/Calibration.png)
 
 While Platt scaling and isotonic regression corrected the uncalibrated curves, they pulled predicted probabilities toward the recall rate of the entire dataset (approximate mean probabilities of 0.85). This demonstrates that we cannot discriminate between the probabilities for recalling vehicles.
 
-![Formula](https://raw.githubusercontent.com/shak789/Car-Recall/master/Platt_Scaling_Isotonic_Regression.png)
+![Formula](https://raw.githubusercontent.com/shak789/Car-Recall/master/Images/Platt_Scaling_Isotonic_Regression.png)
 
 Due to the uncalibrated probabilities, the interpretation should shift from absolute probabilities to a ranking model with "risk scores" on a scale from 0 to 100. Vehicles are sorted according to scores, enabling regulators and manufacturers to view vehicles with high risk of recall.
 
@@ -45,7 +45,7 @@ The models were evaluated on whether they could segment vehicle risk scores into
 
 The chart below shows that the risk score for logistic regression is monotonically increasing for every bracket, compared to random forest which has inconsistent changes in recall rate across the tiers. Therefore, logistic regression was chosen as the final model since it can provide meaningful rankings for risk scores and manufacturers and regulators can find value in the model’s outputs.
 
-![Formula](https://raw.githubusercontent.com/shak789/Car-Recall/master/Segmentation_Final.png)
+![Formula](https://raw.githubusercontent.com/shak789/Car-Recall/master/Images/Segmentation_Final.png)
 
 
 ## Testing on Unseen Data
@@ -55,7 +55,7 @@ The model’s diminishing AUC can be explained by the following:
 
 1.	Early warning of vehicle recalls: The model is flagging some vehicles as high risk that may not yet have received official recall. There were over 25 non-recalled vehicles (approximately 15% of non-recalled vehicles) with risk scores above 70. This is shown by the slight plateau in recall rate for vehicles with a risk score of 70-80 in the diagram below. The early warning system is useful for manufacturers to proactively investigate vehicles rather than wait for NHTSA action. Even if NHTSA does not issue a recall, the high risk scores show that the vehicles have many problematic complaints that can affect consumer trust and sales.
 
-   ![Formula](https://raw.githubusercontent.com/shak789/Car-Recall/master/Segment2.png)
+   ![Formula](https://raw.githubusercontent.com/shak789/Car-Recall/master/Iamges/Segment2.png)
    
 2.	Complaint accumulation lag: KeyBERT complaint scores decrease for recent years as newer vehicles have not accumulated enough complaints yet, particularly 2025-2026.
 
@@ -68,7 +68,7 @@ The model struggles with predicting risk scores for vehicles where the complaint
 
 The model's struggles in predicting risk scores are further illustrated by the following histograms. Both histograms show that the model has assigned higher risk scores to recalled vehicles than non-recalled vehicles and is successfully ranking risk. However, there is an overlap between 40 and 60, showing the model is struggling in discriminating complaints for some vehicle segments (luxury/near-luxury, commercial fleet).
    
-![Formula](https://raw.githubusercontent.com/shak789/Car-Recall/master/Distribution.png)
+![Formula](https://raw.githubusercontent.com/shak789/Car-Recall/master/Images/Distribution.png)
 
 The model's primary value still lies in ranking recall risk rather than predicting recalls with absolute certainty. Regulators and manufacturers do not necessarily need perfectly calibrated predictions. Instead, they need the model to rank higher-risk vehicles above lower-risk ones, which is confirmed by the distributions and recall rate increasing across tiers.
 
@@ -79,7 +79,7 @@ The distribution of scores leads to 3 distinct tiers for evaluating recalls:
 
 ## SHAP Analysis
 
-![Formula](https://raw.githubusercontent.com/shak789/Car-Recall/master/shap_xgb_dot.png)
+![Formula](https://raw.githubusercontent.com/shak789/Car-Recall/master/Images/shap_xgb_dot.png)
 
 The SHAP analysis shows three important insights:
 1. Normalizing the first-year complaint proportion by manufacturer volume was a reasonable decision. In earlier iterations, complaint volume drowned out the other features, but the graph above shows balanced SHAP values.

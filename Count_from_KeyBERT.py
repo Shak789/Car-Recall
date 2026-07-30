@@ -65,29 +65,12 @@ def filter_keyphrases(phrases):
 df["top_words_filtered"] = df["top_words"].apply(filter_keyphrases)
 
 
-# step 1: flatten all keyphrases across all vehicles into one list
 all_phrases = [
     phrase
     for phrases in df["top_words_filtered"]
     for phrase in phrases
 ]
 
-# step 2: count most common
 phrase_counts = Counter(all_phrases)
 top_phrases = [phrase for phrase, count in phrase_counts.most_common(100)]
 print(top_phrases)
-
-print(df["top_words"].iloc[0] )
-
-# how many unique vehicles contributed to these phrases
-print(f"Total vehicles: {len(df)}")
-
-# check phrase distribution across components
-print(df["top_words"].apply(lambda x: 
-    any("brake" in p for p in x)).sum(), "vehicles with brake phrases")
-print(df["top_words"].apply(lambda x: 
-    any("engine" in p for p in x)).sum(), "vehicles with engine phrases")
-print(df["top_words"].apply(lambda x: 
-    any("airbag" in p for p in x)).sum(), "vehicles with airbag phrases")
-print(df["top_words"].apply(lambda x: 
-    any("steer" in p for p in x)).sum(), "vehicles with steering phrases")
