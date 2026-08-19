@@ -917,8 +917,7 @@ with tab7:
     try:
         runs = mlflow.search_runs(
             experiment_names=["/Users/shakjivraj87@gmail.com/Car Recall Pipeline Prod"],
-            order_by=["start_time DESC"],
-            max_results=7
+            order_by=["start_time DESC"]
         )
        
         if runs.empty:
@@ -949,6 +948,7 @@ with tab7:
     )
    
     st.header("General Information")
+    st.markdown("Pipeline is run daily to check for new NHTSA complaints. If there are no new complaints, a run is not recorded and metrics are not logged.")
     st.markdown(f"*Latest run: {pd.to_datetime(latest_run['start_time']).strftime('%Y-%m-%d %H:%M:%S')}*")
 
     col2, col3, col4 =  st.columns([1.5, 1.0, 1.3])
